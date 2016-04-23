@@ -7,8 +7,11 @@
 //
 
 #import "DemoViewController.h"
+#import "SRVSegmentedControl.h"
 
 @interface DemoViewController ()
+
+@property (weak, nonatomic) IBOutlet SRVSegmentedControl *segmentedControl;
 
 @end
 
@@ -16,7 +19,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+
+    self.segmentedControl.items = @[@"hello", @"how", @"are", @"you"];
 }
 
 - (void)didReceiveMemoryWarning {

@@ -14,9 +14,9 @@
 		223B85B01CCAC3F600D8D500 /* BackgroundImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 223B85AA1CCAC3F600D8D500 /* BackgroundImage.png */; };
 		223B85B11CCAC3F600D8D500 /* BackgroundImage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 223B85AB1CCAC3F600D8D500 /* BackgroundImage@2x.png */; };
 		223B85B21CCAC3F600D8D500 /* BackgroundImage@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 223B85AC1CCAC3F600D8D500 /* BackgroundImage@3x.png */; };
-		223B85B31CCAC3F600D8D500 /* SelectedImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 223B85AD1CCAC3F600D8D500 /* SelectedImage.png */; };
-		223B85B41CCAC3F600D8D500 /* SelectedImage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 223B85AE1CCAC3F600D8D500 /* SelectedImage@2x.png */; };
-		223B85B51CCAC3F600D8D500 /* SelectedImage@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 223B85AF1CCAC3F600D8D500 /* SelectedImage@3x.png */; };
+		223B85B31CCAC3F600D8D500 /* SelectorImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 223B85AD1CCAC3F600D8D500 /* SelectorImage.png */; };
+		223B85B41CCAC3F600D8D500 /* SelectorImage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 223B85AE1CCAC3F600D8D500 /* SelectorImage@2x.png */; };
+		223B85B51CCAC3F600D8D500 /* SelectorImage@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 223B85AF1CCAC3F600D8D500 /* SelectorImage@3x.png */; };
 		223B85B81CCAC41300D8D500 /* SRVSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 223B85B71CCAC41300D8D500 /* SRVSegmentedControl.m */; };
 /* End PBXBuildFile section */
 
@@ -32,9 +32,9 @@
 		223B85AA1CCAC3F600D8D500 /* BackgroundImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BackgroundImage.png; sourceTree = "<group>"; };
 		223B85AB1CCAC3F600D8D500 /* BackgroundImage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BackgroundImage@2x.png"; sourceTree = "<group>"; };
 		223B85AC1CCAC3F600D8D500 /* BackgroundImage@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BackgroundImage@3x.png"; sourceTree = "<group>"; };
-		223B85AD1CCAC3F600D8D500 /* SelectedImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SelectedImage.png; sourceTree = "<group>"; };
-		223B85AE1CCAC3F600D8D500 /* SelectedImage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SelectedImage@2x.png"; sourceTree = "<group>"; };
-		223B85AF1CCAC3F600D8D500 /* SelectedImage@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SelectedImage@3x.png"; sourceTree = "<group>"; };
+		223B85AD1CCAC3F600D8D500 /* SelectorImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SelectorImage.png; sourceTree = "<group>"; };
+		223B85AE1CCAC3F600D8D500 /* SelectorImage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SelectorImage@2x.png"; sourceTree = "<group>"; };
+		223B85AF1CCAC3F600D8D500 /* SelectorImage@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SelectorImage@3x.png"; sourceTree = "<group>"; };
 		223B85B61CCAC41300D8D500 /* SRVSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRVSegmentedControl.h; path = ../SRVSegmentedControl/SRVSegmentedControl.h; sourceTree = "<group>"; };
 		223B85B71CCAC41300D8D500 /* SRVSegmentedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRVSegmentedControl.m; path = ../SRVSegmentedControl/SRVSegmentedControl.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -105,9 +105,9 @@
 				223B85AA1CCAC3F600D8D500 /* BackgroundImage.png */,
 				223B85AB1CCAC3F600D8D500 /* BackgroundImage@2x.png */,
 				223B85AC1CCAC3F600D8D500 /* BackgroundImage@3x.png */,
-				223B85AD1CCAC3F600D8D500 /* SelectedImage.png */,
-				223B85AE1CCAC3F600D8D500 /* SelectedImage@2x.png */,
-				223B85AF1CCAC3F600D8D500 /* SelectedImage@3x.png */,
+				223B85AD1CCAC3F600D8D500 /* SelectorImage.png */,
+				223B85AE1CCAC3F600D8D500 /* SelectorImage@2x.png */,
+				223B85AF1CCAC3F600D8D500 /* SelectorImage@3x.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -171,11 +171,11 @@
 			files = (
 				223B85A71CCABE5800D8D500 /* DemoViewController.xib in Resources */,
 				223B85B11CCAC3F600D8D500 /* BackgroundImage@2x.png in Resources */,
-				223B85B31CCAC3F600D8D500 /* SelectedImage.png in Resources */,
-				223B85B51CCAC3F600D8D500 /* SelectedImage@3x.png in Resources */,
+				223B85B31CCAC3F600D8D500 /* SelectorImage.png in Resources */,
+				223B85B51CCAC3F600D8D500 /* SelectorImage@3x.png in Resources */,
 				223B85B01CCAC3F600D8D500 /* BackgroundImage.png in Resources */,
 				223B85B21CCAC3F600D8D500 /* BackgroundImage@3x.png in Resources */,
-				223B85B41CCAC3F600D8D500 /* SelectedImage@2x.png in Resources */,
+				223B85B41CCAC3F600D8D500 /* SelectorImage@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
