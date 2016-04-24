@@ -45,6 +45,7 @@
     [self setupTrack];
     [self setupLabels];
     [self setupSelector];
+    [self setupGestureRecognizers];
     
     [self bringSubviewToFront:self.selectedLabelsContainterView];
     
@@ -53,7 +54,6 @@
     
     [self setupSelectorMask];
     
-    self.selectorImageView.hidden = YES;
 }
 
 - (void)setupTrack {
@@ -113,7 +113,8 @@
     
     self.selectedLabelsContainterView = [UIView new];
     self.selectedLabelsContainterView.translatesAutoresizingMaskIntoConstraints = NO;
-
+    self.selectedLabelsContainterView.userInteractionEnabled = NO;
+    
     self.selectedLabelsContainterView.backgroundColor = [self randomColor];
     
     [self addSubview:self.selectedLabelsContainterView];
@@ -164,8 +165,10 @@
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[selector]-0-|" options:0 metrics:nil views:@{@"selector" : self.selectorImageView}]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.selectorImageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:(1.0 / self.items.count) constant:0]];
     
-    self.selectorOffsetConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.selectorImageView attribute:NSLayoutAttributeLeading multiplier:1 constant:0];
+    self.selectorOffsetConstraint = [NSLayoutConstraint constraintWithItem:self.selectorImageView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1 constant:0];
     [self addConstraint:self.selectorOffsetConstraint];
+    
+    self.selectorImageView.userInteractionEnabled = YES;
 }
 
 - (void)setupSelectorMask {
@@ -175,12 +178,21 @@
     self.selectedLabelsContainterView.maskView = self.selectorImageMaskView;
 }
 
+- (void)updateMaskViewLocation {
+    self.selectorImageMaskView.frame = self.selectorImageView.frame;
+}
+
+- (void)setupGestureRecognizers {
+    
+    [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)]];
+    [self.selectorImageView addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)]];
+}
+
 - (UIColor *)randomColor {
     NSArray *colors = @[[UIColor redColor], [UIColor blueColor], [UIColor greenColor], [UIColor yellowColor], [UIColor purpleColor]];
     
     return colors[arc4random() % colors.count];
 }
-
 
 - (void)removeAllSubviews {
     
@@ -188,6 +200,22 @@
     for (UIView *subview in subviews) {
         [subview removeFromSuperview];
     }
+}
+
+#pragma mark - Gesture Recognizer Handlers
+
+- (void)handleTap:(UITapGestureRecognizer *)sender {
+    NSLog(@"tap");
+}
+
+- (void)handlePan:(UIPanGestureRecognizer *)sender {
+    
+    NSLog(@"translation: %@", NSStringFromCGPoint([sender translationInView:self]));
+    
+    self.selectorOffsetConstraint.constant = [sender translationInView:self].x;
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
+    [self updateMaskViewLocation];
 }
 
 #pragma mark - Setters and Getters
@@ -218,7 +246,6 @@
     
     return _selectorImage;
 }
-
 
 #pragma mark - Cocoapod Resource Bundle Handling
 
