@@ -25,16 +25,15 @@
 @implementation SRVSegmentedControl
 
 @synthesize trackImage = _trackImage;
+@synthesize selectorImage = _selectorImage;
 
 - (instancetype)initWithItems:(NSArray<NSString *> *)items {
     
     self = [super init];
     if (self) {
         
-        
         [self reflowViews];
     }
-    
     return self;
 }
 
@@ -53,19 +52,24 @@
     [self layoutIfNeeded];
     
     [self setupSelectorMask];
-    
 }
 
 - (void)setupTrack {
     
-    self.trackImageView = [[UIImageView alloc] initWithImage:self.trackImage];
+    if (self.trackColor) {
+        self.trackImageView = [[UIImageView alloc] initWithImage:[self.trackImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
+        self.trackImageView.tintColor = self.trackColor;
+    }
+    else {
+        self.trackImageView = [[UIImageView alloc] initWithImage:self.trackImage];
+    }
     
     self.trackImageView.translatesAutoresizingMaskIntoConstraints = NO;
-    
     [self addSubview:self.trackImageView];
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[track]-0-|" options:0 metrics:nil views:@{@"track" : self.trackImageView}]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[track]-0-|" options:0 metrics:nil views:@{@"track" : self.trackImageView}]];
+    NSDictionary *views = @{@"track" : self.trackImageView};
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[track]-0-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[track]-0-|" options:0 metrics:nil views:views]];
 }
 
 - (void)setupLabels {
@@ -91,9 +95,11 @@
         itemUnselectedLabel.minimumScaleFactor =
         itemSelectedLabel.minimumScaleFactor = 0.5;
         
-        itemSelectedLabel.textColor = [UIColor whiteColor];
+        itemSelectedLabel.textColor = self.selectedFontColor ? : [UIColor whiteColor];
+        itemUnselectedLabel.textColor = self.unselectedFontColor ? : [UIColor blackColor];
         
-        //itemLabel.backgroundColor = [self randomColor];
+        itemSelectedLabel.font =
+        itemUnselectedLabel.font = self.font;
         
         [unselectedLabels addObject:itemUnselectedLabel];
         [selectedLabels addObject:itemSelectedLabel];
@@ -106,7 +112,6 @@
     
     [self setupLabelConstraintsForLabels:self.unselectedLabels inView:self];
     [self setupLabelConstraintsForLabels:self.selectedLabels inView:self.selectedLabelsContainterView];
-    
 }
 
 - (void)setupSelectedLabelsContainerView {
@@ -114,13 +119,12 @@
     self.selectedLabelsContainterView = [UIView new];
     self.selectedLabelsContainterView.translatesAutoresizingMaskIntoConstraints = NO;
     self.selectedLabelsContainterView.userInteractionEnabled = NO;
-    
-    self.selectedLabelsContainterView.backgroundColor = [self randomColor];
-    
+        
     [self addSubview:self.selectedLabelsContainterView];
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[container]-0-|" options:0 metrics:nil views:@{@"container" : self.selectedLabelsContainterView}]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[container]-0-|" options:0 metrics:nil views:@{@"container" : self.selectedLabelsContainterView}]];
+    NSDictionary *views = @{@"container" : self.selectedLabelsContainterView};
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[container]-0-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[container]-0-|" options:0 metrics:nil views:views]];
 }
 
 - (void)setupLabelConstraintsForLabels:(NSArray<UILabel *> *)labels inView:(UIView *)view {
@@ -151,15 +155,19 @@
     
     UILabel *lastLabel = [labels lastObject];
     [view addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:lastLabel attribute:NSLayoutAttributeTrailing multiplier:1 constant:self.minimumLabelBuffer]];
-    
 }
 
 - (void)setupSelector {
     
-    self.selectorImageView = [[UIImageView alloc] initWithImage:self.selectorImage];
+    if (self.selectorColor) {
+        self.selectorImageView = [[UIImageView alloc] initWithImage:[self.selectorImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
+        self.selectorImageView.tintColor = self.selectorColor;
+    }
+    else {
+        self.selectorImageView = [[UIImageView alloc] initWithImage:self.selectorImage];
+    }
     
     self.selectorImageView.translatesAutoresizingMaskIntoConstraints = NO;
-    
     [self addSubview:self.selectorImageView];
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[selector]-0-|" options:0 metrics:nil views:@{@"selector" : self.selectorImageView}]];
@@ -178,20 +186,10 @@
     self.selectedLabelsContainterView.maskView = self.selectorImageMaskView;
 }
 
-- (void)updateMaskViewLocation {
-    self.selectorImageMaskView.frame = self.selectorImageView.frame;
-}
-
 - (void)setupGestureRecognizers {
     
     [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)]];
     [self.selectorImageView addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)]];
-}
-
-- (UIColor *)randomColor {
-    NSArray *colors = @[[UIColor redColor], [UIColor blueColor], [UIColor greenColor], [UIColor yellowColor], [UIColor purpleColor]];
-    
-    return colors[arc4random() % colors.count];
 }
 
 - (void)removeAllSubviews {
@@ -205,17 +203,49 @@
 #pragma mark - Gesture Recognizer Handlers
 
 - (void)handleTap:(UITapGestureRecognizer *)sender {
-    NSLog(@"tap");
+    
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        [self moveSelectorToSegmentForXOffset:[sender locationInView:self].x];
+    }
 }
 
 - (void)handlePan:(UIPanGestureRecognizer *)sender {
     
-    NSLog(@"translation: %@", NSStringFromCGPoint([sender translationInView:self]));
+    static CGFloat startingOffset;
     
-    self.selectorOffsetConstraint.constant = [sender translationInView:self].x;
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        startingOffset = self.selectorOffsetConstraint.constant;
+    }
+    else if (sender.state == UIGestureRecognizerStateChanged) {
+        
+        CGFloat newOffset = [sender translationInView:self].x + startingOffset;
+        newOffset = MAX(0, newOffset);
+        newOffset = MIN(newOffset, self.frame.size.width - self.selectorImageView.frame.size.width);
+        
+        self.selectorOffsetConstraint.constant = newOffset;
+        [self updateSelectorLocation];
+    }
+    else {
+        [self snapToCurrentSegment];
+    }
+}
+
+- (void)moveSelectorToSegmentForXOffset:(CGFloat)xOffset {
+    
+    NSInteger segment = (xOffset / self.frame.size.width) * self.items.count;
+    [self setSelectedSegmentIndex:segment animated:YES];
+}
+
+- (void)snapToCurrentSegment {
+    
+    CGFloat centerOfSelectorOffset = self.selectorOffsetConstraint.constant + (self.selectorImageView.frame.size.width / 2);
+    [self moveSelectorToSegmentForXOffset:centerOfSelectorOffset];
+}
+
+- (void)updateSelectorLocation {
     [self setNeedsLayout];
     [self layoutIfNeeded];
-    [self updateMaskViewLocation];
+    self.selectorImageMaskView.frame = self.selectorImageView.frame;
 }
 
 #pragma mark - Setters and Getters
@@ -228,7 +258,7 @@
 - (UIImage *)trackImage {
     
     if (!_trackImage) {
-        _trackImage = [[self imageForResourceNamed:@"BackgroundImage.png"] resizableImageWithCapInsets:self.edgeInsetsForDefaultImages];
+        _trackImage = [[self imageInPodsBundleNamed:@"BackgroundImage"] resizableImageWithCapInsets:self.edgeInsetsForDefaultImages];
     }
     
     return _trackImage;
@@ -236,36 +266,108 @@
 
 - (void)setTrackImage:(UIImage *)trackImage {
     _trackImage = trackImage;
+    self.trackImageView.image = trackImage;
+}
+
+- (void)setTrackColor:(UIColor *)trackColor{
+    _trackColor = trackColor;
+    
+    if (self.trackImage.renderingMode != UIImageRenderingModeAlwaysTemplate) {
+        self.trackImage = [self.trackImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    }
+    self.trackImageView.tintColor = trackColor;
 }
 
 - (UIImage *)selectorImage {
     
     if (!_selectorImage) {
-        _selectorImage = [[self imageForResourceNamed:@"SelectorImage.png"] resizableImageWithCapInsets:self.edgeInsetsForDefaultImages];
+        _selectorImage = [[self imageInPodsBundleNamed:@"SelectorImage"] resizableImageWithCapInsets:self.edgeInsetsForDefaultImages];
     }
     
     return _selectorImage;
 }
 
+- (void)setSelectorImage:(UIImage *)selectorImage {
+    _selectorImage = selectorImage;
+    self.selectorImageView.image = selectorImage;
+    [self setupSelectorMask];
+}
+
+- (void)setSelectorColor:(UIColor *)selectorColor {
+    _selectorColor = selectorColor;
+    
+    if (self.selectorImage.renderingMode != UIImageRenderingModeAlwaysTemplate) {
+        self.selectorImage = [self.selectorImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    }
+    self.selectorImageView.tintColor = selectorColor;
+}
+
+- (void)setFont:(UIFont *)font {
+    
+    _font = font;
+    for (UILabel *label in self.unselectedLabels) {
+        label.font = font;
+    }
+    for (UILabel *label in self.selectedLabels) {
+        label.font = font;
+    }
+}
+
+- (void)setSelectedFontColor:(UIColor *)selectedFontColor {
+
+    _selectedFontColor = selectedFontColor;
+    for (UILabel *label in self.selectedLabels) {
+        label.textColor = selectedFontColor;
+    }
+}
+
+- (void)setUnselectedFontColor:(UIColor *)unselectedFontColor {
+    
+    _unselectedFontColor = unselectedFontColor;
+    for (UILabel *label in self.unselectedLabels) {
+        label.textColor = unselectedFontColor;
+    }
+}
+
+- (void)setSelectedSegmentIndex:(NSInteger)selectedSegmentIndex {
+    [self setSelectedSegmentIndex:selectedSegmentIndex animated:NO];
+}
+
+- (void)setSelectedSegmentIndex:(NSInteger)segmentIndex animated:(BOOL)animated {
+    
+    if (segmentIndex < 0 || segmentIndex > self.items.count) {
+        return;
+    }
+    
+    CGFloat endOffset = (segmentIndex * self.selectorImageView.frame.size.width);
+    
+    self.selectorOffsetConstraint.constant = endOffset;
+    [self setNeedsUpdateConstraints];
+    
+    if (animated) {
+        CGRect endFrameForMask = CGRectMake(endOffset, 0, self.selectorImageMaskView.frame.size.width, self.selectorImageMaskView.frame.size.height);
+        [UIView animateWithDuration:0.3 animations:^{
+            
+            [self layoutIfNeeded];
+            self.selectorImageMaskView.frame = endFrameForMask;
+            
+        } completion:^(BOOL finished) {
+            _selectedSegmentIndex = segmentIndex;
+            [self sendActionsForControlEvents:UIControlEventValueChanged];
+        }];
+    }
+    else {
+        [self updateSelectorLocation];
+        _selectedSegmentIndex = segmentIndex;
+        [self sendActionsForControlEvents:UIControlEventValueChanged];
+    }
+}
+
 #pragma mark - Cocoapod Resource Bundle Handling
 
-- (UIImage *)imageForResourceNamed:(NSString *)fullResourceName {
-    
-    NSString *resolutionExtension = @"";
-    CGFloat scale = [UIScreen mainScreen].scale;
-    if (scale > 1.9 && scale < 2.1) {
-        resolutionExtension = @"@2x";
-    }
-    else if (scale > 2.9 && scale < 3.1) {
-        resolutionExtension = @"@3x";
-    }
-    
-    NSString *extension = [fullResourceName pathExtension];
-    NSString *resourceName = [[fullResourceName stringByDeletingPathExtension] stringByAppendingString:resolutionExtension];
-
-    NSURL *url = [[NSBundle bundleForClass:[self class]] URLForResource:resourceName withExtension:extension];
-    NSData *imageData = [NSData dataWithContentsOfURL:url];
-    return [[UIImage alloc] initWithData:imageData scale:scale];
+- (UIImage *)imageInPodsBundleNamed:(NSString *)imageName {
+    NSBundle *podBundle = [NSBundle bundleForClass:[self class]];
+    return [UIImage imageNamed:imageName inBundle:podBundle compatibleWithTraitCollection:nil];
 }
 
 - (UIEdgeInsets)edgeInsetsForDefaultImages {

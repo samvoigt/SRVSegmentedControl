@@ -12,10 +12,10 @@
 
 @property (nonatomic, strong) NSArray<NSString *> *items;
 @property (nonatomic, strong) UIImage *trackImage;
-@property (nonatomic, strong) UIImage *selectorImage;
-
-@property (nonatomic, strong) UIColor *selectorColor;
 @property (nonatomic, strong) UIColor *trackColor;
+
+@property (nonatomic, strong) UIImage *selectorImage;
+@property (nonatomic, strong) UIColor *selectorColor;
 
 @property (nonatomic, strong) UIFont *font;
 
@@ -23,6 +23,10 @@
 @property (nonatomic, strong) UIColor *unselectedFontColor;
 
 @property (nonatomic) CGFloat minimumLabelBuffer;
+
+@property (nonatomic) NSInteger selectedSegmentIndex;
+
+- (void)setSelectedSegmentIndex:(NSInteger)segmentIndex animated:(BOOL)animated;
 
 - (instancetype)initWithItems:(NSArray<NSString *> *)items;
 

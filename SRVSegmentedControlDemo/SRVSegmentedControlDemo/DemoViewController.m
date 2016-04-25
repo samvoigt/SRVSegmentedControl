@@ -13,6 +13,8 @@
 
 @property (weak, nonatomic) IBOutlet SRVSegmentedControl *segmentedControl;
 
+@property (weak, nonatomic) IBOutlet UILabel *selectedSegmentLabel;
+
 @end
 
 @implementation DemoViewController
@@ -21,21 +23,28 @@
     [super viewDidLoad];
 
     self.segmentedControl.items = @[@"hello", @"how", @"are", @"you"];
+    [self updateSelectedSegmentLabel];
+    
+    self.segmentedControl.selectorColor = [UIColor purpleColor];
+    self.segmentedControl.trackColor = [UIColor blueColor];
+    
+    self.segmentedControl.font = [UIFont boldSystemFontOfSize:10.0];
+    
+    self.segmentedControl.selectedFontColor = [UIColor redColor];
+    self.segmentedControl.unselectedFontColor = [UIColor greenColor];
+    
+    self.segmentedControl.selectedSegmentIndex = 2;
+    
+    self.segmentedControl.items = @[@"hey", @"you"];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (IBAction)segmentedControlValueChanged:(SRVSegmentedControl *)sender {
+    
+    [self updateSelectedSegmentLabel];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)updateSelectedSegmentLabel {
+    self.selectedSegmentLabel.text = [NSString stringWithFormat:@"Selected Segment: %li", self.segmentedControl.selectedSegmentIndex];
 }
-*/
 
 @end
