@@ -372,8 +372,10 @@
 #pragma mark - Cocoapod Resource Bundle Handling
 
 - (UIImage *)imageInPodsBundleNamed:(NSString *)imageName {
-    NSBundle *podBundle = [NSBundle bundleForClass:[self class]];
-    return [UIImage imageNamed:imageName inBundle:podBundle compatibleWithTraitCollection:nil];
+    
+    NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"SRVSegmentedControl" ofType:@"bundle"];
+    NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
+    return [UIImage imageNamed:imageName inBundle:bundle compatibleWithTraitCollection:nil];
 }
 
 - (UIEdgeInsets)edgeInsetsForDefaultImages {
