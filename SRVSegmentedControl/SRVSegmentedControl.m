@@ -37,10 +37,16 @@
     return self;
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    self.selectorImageMaskView.frame = self.selectorImageView.frame;
+}
+
 - (void)reflowViews {
     
     [self removeAllSubviews];
     
+    self.selectedSegmentIndex = 0;
     [self setupTrack];
     [self setupLabels];
     [self setupSelector];
