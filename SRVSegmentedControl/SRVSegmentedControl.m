@@ -281,7 +281,7 @@
 - (UIImage *)selectorImage {
     
     if (!_selectorImage) {
-        _selectorImage = [[self imageInPodsBundleNamed:@"SelectorImage"] resizableImageWithCapInsets:self.edgeInsetsForDefaultImages];
+        _selectorImage = [[self imageInPodsBundleNamed:@"SelectedImage"] resizableImageWithCapInsets:self.edgeInsetsForDefaultImages];
     }
     
     return _selectorImage;
