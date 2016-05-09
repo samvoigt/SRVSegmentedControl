@@ -139,12 +139,12 @@
 
 - (void)setupTrackView {
     
-    if (self.trackView.superview) {
-        return;
+    if (self.trackView) {
+        [self.trackView removeFromSuperview];
     }
     
     self.trackView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addSubview:self.trackView];
+    [self insertSubview:self.trackView atIndex:0];
     
     NSDictionary *views = @{@"track" : self.trackView};
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[track]-0-|" options:0 metrics:nil views:views]];
@@ -253,7 +253,7 @@
     }
     
     self.selectorView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addSubview:self.selectorView];
+    [self insertSubview:self.selectorView atIndex:1];
     
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[selector]-0-|" options:0 metrics:nil views:@{@"selector" : self.selectorView}]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.selectorView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:(1.0 / self.items.count) constant:0]];
@@ -265,16 +265,25 @@
 }
 
 - (void)setupSelectorMask {
-    self.selectorMaskView = [[UIImageView alloc] initWithFrame:self.selectorView.frame];
-    ((UIImageView *)self.selectorMaskView).image = self.selectorImage;
+    
+    if ([self.selectorView isKindOfClass:[UIImageView class]]) {
+        self.selectorMaskView = [[UIImageView alloc] initWithFrame:self.selectorView.frame];
+        ((UIImageView *)self.selectorMaskView).image = self.selectorImage;
+    }
+    else {
+        self.selectorMaskView = [[UIView alloc] initWithFrame:self.selectorView.frame];
+        self.selectorMaskView.backgroundColor = [UIColor blackColor];
+    }
     
     self.selectedLabelsContainterView.maskView = self.selectorMaskView;
 }
 
 - (void)setupGestureRecognizers {
     
+    for (UIGestureRecognizer *recognizer in self.gestureRecognizers) {
+        [self removeGestureRecognizer:recognizer];
+    }
     [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)]];
-    [self.selectorView addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)]];
 }
 
 - (void)removeAllSubviews {
@@ -351,13 +360,18 @@
 
 - (void)setSelectorView:(UIView *)selectorView {
     
-    if (_selectorView) {
+    if (_selectorView == selectorView) {
+        return;
+    }
+    else if (_selectorView) {
         [_selectorView removeFromSuperview];
     }
+    
     _selectorView = selectorView;
     [self setupSelectorView];
+    [_selectorView addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)]];
+    [self setupSelectorMask];
 }
-
 
 - (void)setTrackImage:(UIImage *)trackImage {
     
@@ -384,12 +398,8 @@
    
     if ([self.selectorView isKindOfClass:[UIImageView class]]){
         ((UIImageView *)self.selectorView).image = selectorImage;
+        [self setupSelectorMask];
     }
-    else {
-        [self setupSelectorView];
-    }
-    
-    [self setupSelectorMask];
 }
 
 - (void)setSelectorImageColor:(UIColor *)selectorImageColor {
