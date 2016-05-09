@@ -31,7 +31,7 @@
     
     self = [super init];
     if (self) {
-        
+        self.items = items;
         [self reflowViews];
     }
     return self;
@@ -350,6 +350,9 @@
     self.selectorOffsetConstraint.constant = endOffset;
     [self setNeedsUpdateConstraints];
     
+    _selectedSegmentIndex = segmentIndex;
+    [self sendActionsForControlEvents:UIControlEventValueChanged];
+    
     if (animated) {
         CGRect endFrameForMask = CGRectMake(endOffset, 0, self.selectorImageMaskView.frame.size.width, self.selectorImageMaskView.frame.size.height);
         [UIView animateWithDuration:0.3 animations:^{
@@ -357,15 +360,10 @@
             [self layoutIfNeeded];
             self.selectorImageMaskView.frame = endFrameForMask;
             
-        } completion:^(BOOL finished) {
-            _selectedSegmentIndex = segmentIndex;
-            [self sendActionsForControlEvents:UIControlEventValueChanged];
         }];
     }
     else {
         [self updateSelectorLocation];
-        _selectedSegmentIndex = segmentIndex;
-        [self sendActionsForControlEvents:UIControlEventValueChanged];
     }
 }
 
