@@ -26,25 +26,26 @@
 @property (nonatomic, strong) UIColor *selectedTextColor;
 @property (nonatomic, strong) UIColor *unselectedTextColor;
 
-@property (nonatomic) CGFloat minimumLabelBuffer;
-
 @property (nonatomic) NSInteger selectedSegmentIndex;
 
 - (void)setSelectedSegmentIndex:(NSInteger)segmentIndex animated:(BOOL)animated;
 
 - (instancetype)initWithItems:(NSArray<NSString *> *)items;
+
 - (instancetype)initWithItems:(NSArray<NSString *> *)items
                          font:(UIFont *)font
             selectedTextColor:(UIColor *)selectedTextColor
           unselectedTextColor:(UIColor *)unselectedTextColor
                     trackView:(UIView *)trackView
                  selectorView:(UIView *)selectorView;
+
 - (instancetype)initWithItems:(NSArray<NSString *> *)items
                          font:(UIFont *)font
             selectedTextColor:(UIColor *)selectedTextColor
           unselectedTextColor:(UIColor *)unselectedTextColor
               trackImageColor:(UIColor *)trackImageColor
            selectorImageColor:(UIColor *)selectorImageColor;
+
 - (instancetype)initWithItems:(NSArray<NSString *> *)items
                          font:(UIFont *)font
             selectedTextColor:(UIColor *)selectedTextColor

@@ -218,13 +218,13 @@
     
     UILabel *firstLabel = labels[0];
     [view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[label]-0-|" options:0 metrics:nil views:@{@"label" : firstLabel}]];
-    [view addConstraint:[NSLayoutConstraint constraintWithItem:firstLabel attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:view attribute:NSLayoutAttributeLeading multiplier:1 constant:self.minimumLabelBuffer]];
+    [view addConstraint:[NSLayoutConstraint constraintWithItem:firstLabel attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:view attribute:NSLayoutAttributeLeading multiplier:1 constant:0]];
     
     for (int i = 0; i < labels.count - 1; i++) {
         UILabel *label1 = labels[i];
         UILabel *label2 = labels[i+1];
         
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:label2 attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:label1 attribute:NSLayoutAttributeRight multiplier:1 constant:self.minimumLabelBuffer]];
+        [self addConstraint:[NSLayoutConstraint constraintWithItem:label2 attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:label1 attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
         
         [self addConstraint:[NSLayoutConstraint constraintWithItem:label1 attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:label2 attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:label1 attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:label2 attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
@@ -233,7 +233,7 @@
     }
     
     UILabel *lastLabel = [labels lastObject];
-    [view addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:lastLabel attribute:NSLayoutAttributeTrailing multiplier:1 constant:self.minimumLabelBuffer]];
+    [view addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:lastLabel attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
 }
 
 - (void)loadSelectorViewIfNeeded {
