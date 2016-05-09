@@ -14,9 +14,7 @@
 @property (nonatomic, strong) NSArray<UILabel *> *selectedLabels;
 @property (nonatomic, strong) UIView *selectedLabelsContainterView;
 
-@property (nonatomic, strong) UIImageView *trackImageView;
-@property (nonatomic, strong) UIImageView *selectorImageView;
-@property (nonatomic, strong) UIImageView *selectorImageMaskView;
+@property (nonatomic, strong) UIView *selectorMaskView;
 
 @property (nonatomic, strong) NSLayoutConstraint *selectorOffsetConstraint;
 
@@ -26,6 +24,68 @@
 
 @synthesize trackImage = _trackImage;
 @synthesize selectorImage = _selectorImage;
+
+- (instancetype)initWithItems:(NSArray<NSString *> *)items
+                         font:(UIFont *)font
+            selectedTextColor:(UIColor *)selectedTextColor
+          unselectedTextColor:(UIColor *)unselectedTextColor
+                   trackImage:(UIImage *)trackImage
+                selectorImage:(UIImage *)selectorImage
+              trackImageColor:(UIColor *)trackImageColor
+           selectorImageColor:(UIColor *)selectorImageColor {
+    
+    self = [self initWithItems:items font:font
+             selectedTextColor:selectedTextColor
+           unselectedTextColor:unselectedTextColor
+                     trackView:[[UIImageView alloc] initWithImage:trackImage]
+                  selectorView:[[UIImageView alloc] initWithImage:selectorImage]];
+    
+    if (self) {
+        self.trackImage = trackImage;
+        self.selectorImage = selectorImage;
+        self.trackImageColor = trackImageColor;
+        self.selectorImageColor = selectorImageColor;
+    }
+    return self;
+}
+
+- (instancetype)initWithItems:(NSArray<NSString *> *)items
+                         font:(UIFont *)font
+            selectedTextColor:(UIColor *)selectedTextColor
+          unselectedTextColor:(UIColor *)unselectedTextColor
+              trackImageColor:(UIColor *)trackImageColor
+           selectorImageColor:(UIColor *)selectorImageColor {
+    
+    return [self initWithItems:items
+                          font:font
+             selectedTextColor:selectedTextColor
+           unselectedTextColor:unselectedTextColor
+                    trackImage:[SRVSegmentedControl defaultTrackImage]
+                 selectorImage:[SRVSegmentedControl defaultSelectorImage]
+               trackImageColor:trackImageColor
+            selectorImageColor:selectorImageColor];
+}
+
+- (instancetype)initWithItems:(NSArray<NSString *> *)items
+                         font:(UIFont *)font
+            selectedTextColor:(UIColor *)selectedTextColor
+          unselectedTextColor:(UIColor *)unselectedTextColor
+                    trackView:(UIView *)trackView
+                 selectorView:(UIView *)selectorView {
+    
+    self = [super init];
+    if (self) {
+        self.items = items;
+        self.font = font;
+        self.selectedTextColor = selectedTextColor;
+        self.unselectedTextColor = unselectedTextColor;
+        self.trackView = trackView;
+        self.selectorView = selectorView;
+        [self reflowViews];
+    }
+    return self;
+}
+
 
 - (instancetype)initWithItems:(NSArray<NSString *> *)items {
     
@@ -39,7 +99,7 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    self.selectorImageMaskView.frame = self.selectorImageView.frame;
+    self.selectorMaskView.frame = self.selectorView.frame;
 }
 
 - (void)reflowViews {
@@ -47,9 +107,16 @@
     [self removeAllSubviews];
     
     self.selectedSegmentIndex = 0;
-    [self setupTrack];
+    [self loadTrackViewIfNeeded];
+    
+    [self loadTrackViewIfNeeded];
+    [self setupTrackView];
+    
     [self setupLabels];
-    [self setupSelector];
+    
+    [self loadSelectorViewIfNeeded];
+    [self setupSelectorView];
+    
     [self setupGestureRecognizers];
     
     [self bringSubviewToFront:self.selectedLabelsContainterView];
@@ -60,20 +127,26 @@
     [self setupSelectorMask];
 }
 
-- (void)setupTrack {
-    
-    if (self.trackColor) {
-        self.trackImageView = [[UIImageView alloc] initWithImage:[self.trackImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
-        self.trackImageView.tintColor = self.trackColor;
+- (void)loadTrackViewIfNeeded {
+
+    if (!self.trackView) {
+        if (!self.trackImage) {
+            _trackImage = [SRVSegmentedControl defaultTrackImage];
+        }
+        _trackView = [[UIImageView alloc] initWithImage:self.trackImage];
     }
-    else {
-        self.trackImageView = [[UIImageView alloc] initWithImage:self.trackImage];
+}
+
+- (void)setupTrackView {
+    
+    if (self.trackView.superview) {
+        return;
     }
     
-    self.trackImageView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addSubview:self.trackImageView];
+    self.trackView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:self.trackView];
     
-    NSDictionary *views = @{@"track" : self.trackImageView};
+    NSDictionary *views = @{@"track" : self.trackView};
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[track]-0-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[track]-0-|" options:0 metrics:nil views:views]];
 }
@@ -101,8 +174,8 @@
         itemUnselectedLabel.minimumScaleFactor =
         itemSelectedLabel.minimumScaleFactor = 0.5;
         
-        itemSelectedLabel.textColor = self.selectedFontColor ? : [UIColor whiteColor];
-        itemUnselectedLabel.textColor = self.unselectedFontColor ? : [UIColor blackColor];
+        itemSelectedLabel.textColor = self.selectedTextColor ? : [UIColor whiteColor];
+        itemUnselectedLabel.textColor = self.unselectedTextColor ? : [UIColor blackColor];
         
         itemSelectedLabel.font =
         itemUnselectedLabel.font = self.font;
@@ -163,39 +236,45 @@
     [view addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:lastLabel attribute:NSLayoutAttributeTrailing multiplier:1 constant:self.minimumLabelBuffer]];
 }
 
-- (void)setupSelector {
+- (void)loadSelectorViewIfNeeded {
     
-    if (self.selectorColor) {
-        self.selectorImageView = [[UIImageView alloc] initWithImage:[self.selectorImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
-        self.selectorImageView.tintColor = self.selectorColor;
+    if (!self.selectorView) {
+        if (!self.selectorImage) {
+            _selectorImage = [SRVSegmentedControl defaultSelectorImage];
+        }
+        _selectorView = [[UIImageView alloc] initWithImage:self.selectorImage];
     }
-    else {
-        self.selectorImageView = [[UIImageView alloc] initWithImage:self.selectorImage];
+}
+
+- (void)setupSelectorView {
+    
+    if (self.selectorView) {
+        [self.selectorView removeFromSuperview];
     }
     
-    self.selectorImageView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addSubview:self.selectorImageView];
+    self.selectorView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:self.selectorView];
     
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[selector]-0-|" options:0 metrics:nil views:@{@"selector" : self.selectorImageView}]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.selectorImageView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:(1.0 / self.items.count) constant:0]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[selector]-0-|" options:0 metrics:nil views:@{@"selector" : self.selectorView}]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.selectorView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:(1.0 / self.items.count) constant:0]];
     
-    self.selectorOffsetConstraint = [NSLayoutConstraint constraintWithItem:self.selectorImageView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1 constant:0];
+    self.selectorOffsetConstraint = [NSLayoutConstraint constraintWithItem:self.selectorView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1 constant:0];
     [self addConstraint:self.selectorOffsetConstraint];
     
-    self.selectorImageView.userInteractionEnabled = YES;
+    self.selectorView.userInteractionEnabled = YES;
 }
 
 - (void)setupSelectorMask {
-    self.selectorImageMaskView = [[UIImageView alloc] initWithFrame:self.selectorImageView.frame];
-    self.selectorImageMaskView.image = self.selectorImage;
+    self.selectorMaskView = [[UIImageView alloc] initWithFrame:self.selectorView.frame];
+    ((UIImageView *)self.selectorMaskView).image = self.selectorImage;
     
-    self.selectedLabelsContainterView.maskView = self.selectorImageMaskView;
+    self.selectedLabelsContainterView.maskView = self.selectorMaskView;
 }
 
 - (void)setupGestureRecognizers {
     
     [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)]];
-    [self.selectorImageView addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)]];
+    [self.selectorView addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)]];
 }
 
 - (void)removeAllSubviews {
@@ -226,7 +305,7 @@
         
         CGFloat newOffset = [sender translationInView:self].x + startingOffset;
         newOffset = MAX(0, newOffset);
-        newOffset = MIN(newOffset, self.frame.size.width - self.selectorImageView.frame.size.width);
+        newOffset = MIN(newOffset, self.frame.size.width - self.selectorView.frame.size.width);
         
         self.selectorOffsetConstraint.constant = newOffset;
         [self updateSelectorLocation];
@@ -244,14 +323,14 @@
 
 - (void)snapToCurrentSegment {
     
-    CGFloat centerOfSelectorOffset = self.selectorOffsetConstraint.constant + (self.selectorImageView.frame.size.width / 2);
+    CGFloat centerOfSelectorOffset = self.selectorOffsetConstraint.constant + (self.selectorView.frame.size.width / 2);
     [self moveSelectorToSegmentForXOffset:centerOfSelectorOffset];
 }
 
 - (void)updateSelectorLocation {
     [self setNeedsLayout];
     [self layoutIfNeeded];
-    self.selectorImageMaskView.frame = self.selectorImageView.frame;
+    self.selectorMaskView.frame = self.selectorView.frame;
 }
 
 #pragma mark - Setters and Getters
@@ -261,51 +340,68 @@
     [self reflowViews];
 }
 
-- (UIImage *)trackImage {
+- (void)setTrackView:(UIView *)trackView {
     
-    if (!_trackImage) {
-        _trackImage = [[self imageInPodsBundleNamed:@"BackgroundImage"] resizableImageWithCapInsets:self.edgeInsetsForDefaultImages];
+    if (_trackView) {
+        [_trackView removeFromSuperview];
     }
-    
-    return _trackImage;
+    _trackView = trackView;
+    [self setupTrackView];
 }
+
+- (void)setSelectorView:(UIView *)selectorView {
+    
+    if (_selectorView) {
+        [_selectorView removeFromSuperview];
+    }
+    _selectorView = selectorView;
+    [self setupSelectorView];
+}
+
 
 - (void)setTrackImage:(UIImage *)trackImage {
+    
     _trackImage = trackImage;
-    self.trackImageView.image = trackImage;
+    if ([self.trackView isKindOfClass:[UIImageView class]]){
+        ((UIImageView *)self.trackView).image = trackImage;
+    }
 }
 
-- (void)setTrackColor:(UIColor *)trackColor{
-    _trackColor = trackColor;
+- (void)setTrackImageColor:(UIColor *)trackImageColor{
+    _trackImageColor = trackImageColor;
     
-    if (self.trackImage.renderingMode != UIImageRenderingModeAlwaysTemplate) {
+    if (!self.trackImage) {
+        return;
+    }
+    else if (self.trackImage.renderingMode != UIImageRenderingModeAlwaysTemplate) {
         self.trackImage = [self.trackImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
-    self.trackImageView.tintColor = trackColor;
-}
-
-- (UIImage *)selectorImage {
-    
-    if (!_selectorImage) {
-        _selectorImage = [[self imageInPodsBundleNamed:@"SelectedImage"] resizableImageWithCapInsets:self.edgeInsetsForDefaultImages];
-    }
-    
-    return _selectorImage;
+    self.trackView.tintColor = trackImageColor;
 }
 
 - (void)setSelectorImage:(UIImage *)selectorImage {
     _selectorImage = selectorImage;
-    self.selectorImageView.image = selectorImage;
+   
+    if ([self.selectorView isKindOfClass:[UIImageView class]]){
+        ((UIImageView *)self.selectorView).image = selectorImage;
+    }
+    else {
+        [self setupSelectorView];
+    }
+    
     [self setupSelectorMask];
 }
 
-- (void)setSelectorColor:(UIColor *)selectorColor {
-    _selectorColor = selectorColor;
+- (void)setSelectorImageColor:(UIColor *)selectorImageColor {
+    _selectorImageColor = selectorImageColor;
     
-    if (self.selectorImage.renderingMode != UIImageRenderingModeAlwaysTemplate) {
+    if (!self.selectorImage) {
+        return;
+    }
+    else if (self.selectorImage.renderingMode != UIImageRenderingModeAlwaysTemplate) {
         self.selectorImage = [self.selectorImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
-    self.selectorImageView.tintColor = selectorColor;
+    self.selectorView.tintColor = selectorImageColor;
 }
 
 - (void)setFont:(UIFont *)font {
@@ -319,19 +415,19 @@
     }
 }
 
-- (void)setSelectedFontColor:(UIColor *)selectedFontColor {
+- (void)setSelectedTextColor:(UIColor *)selectedTextColor {
 
-    _selectedFontColor = selectedFontColor;
+    _selectedTextColor = selectedTextColor;
     for (UILabel *label in self.selectedLabels) {
-        label.textColor = selectedFontColor;
+        label.textColor = selectedTextColor;
     }
 }
 
-- (void)setUnselectedFontColor:(UIColor *)unselectedFontColor {
+- (void)setUnselectedTextColor:(UIColor *)unselectedTextColor {
     
-    _unselectedFontColor = unselectedFontColor;
+    _unselectedTextColor = unselectedTextColor;
     for (UILabel *label in self.unselectedLabels) {
-        label.textColor = unselectedFontColor;
+        label.textColor = unselectedTextColor;
     }
 }
 
@@ -345,7 +441,7 @@
         return;
     }
     
-    CGFloat endOffset = (segmentIndex * self.selectorImageView.frame.size.width);
+    CGFloat endOffset = (segmentIndex * self.selectorView.frame.size.width);
     
     self.selectorOffsetConstraint.constant = endOffset;
     [self setNeedsUpdateConstraints];
@@ -354,11 +450,11 @@
     [self sendActionsForControlEvents:UIControlEventValueChanged];
     
     if (animated) {
-        CGRect endFrameForMask = CGRectMake(endOffset, 0, self.selectorImageMaskView.frame.size.width, self.selectorImageMaskView.frame.size.height);
+        CGRect endFrameForMask = CGRectMake(endOffset, 0, self.selectorMaskView.frame.size.width, self.selectorMaskView.frame.size.height);
         [UIView animateWithDuration:0.3 animations:^{
             
             [self layoutIfNeeded];
-            self.selectorImageMaskView.frame = endFrameForMask;
+            self.selectorMaskView.frame = endFrameForMask;
             
         }];
     }
@@ -369,14 +465,24 @@
 
 #pragma mark - Cocoapod Resource Bundle Handling
 
-- (UIImage *)imageInPodsBundleNamed:(NSString *)imageName {
++ (UIImage *)defaultTrackImage {
+ 
+    return [[[SRVSegmentedControl imageInPodsBundleNamed:@"TrackImage"] resizableImageWithCapInsets:self.edgeInsetsForDefaultImages] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+}
+
++ (UIImage *)defaultSelectorImage {
+    
+    return [[[SRVSegmentedControl imageInPodsBundleNamed:@"SelectorImage"] resizableImageWithCapInsets:self.edgeInsetsForDefaultImages] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+}
+
++ (UIImage *)imageInPodsBundleNamed:(NSString *)imageName {
     
     NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"SRVSegmentedControl" ofType:@"bundle"];
     NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
     return [UIImage imageNamed:imageName inBundle:bundle compatibleWithTraitCollection:nil];
 }
 
-- (UIEdgeInsets)edgeInsetsForDefaultImages {
++ (UIEdgeInsets)edgeInsetsForDefaultImages {
     return UIEdgeInsetsMake(20, 20, 20, 20);
 }
 

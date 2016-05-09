@@ -11,16 +11,20 @@
 @interface SRVSegmentedControl : UIControl
 
 @property (nonatomic, strong) NSArray<NSString *> *items;
-@property (nonatomic, strong) UIImage *trackImage;
-@property (nonatomic, strong) UIColor *trackColor;
 
+@property (nonatomic, strong) UIImage *trackImage;
 @property (nonatomic, strong) UIImage *selectorImage;
-@property (nonatomic, strong) UIColor *selectorColor;
+
+@property (nonatomic, strong) UIColor *trackImageColor;
+@property (nonatomic, strong) UIColor *selectorImageColor;
+
+@property (nonatomic, strong) UIView *trackView;
+@property (nonatomic, strong) UIView *selectorView;
 
 @property (nonatomic, strong) UIFont *font;
 
-@property (nonatomic, strong) UIColor *selectedFontColor;
-@property (nonatomic, strong) UIColor *unselectedFontColor;
+@property (nonatomic, strong) UIColor *selectedTextColor;
+@property (nonatomic, strong) UIColor *unselectedTextColor;
 
 @property (nonatomic) CGFloat minimumLabelBuffer;
 
@@ -29,5 +33,25 @@
 - (void)setSelectedSegmentIndex:(NSInteger)segmentIndex animated:(BOOL)animated;
 
 - (instancetype)initWithItems:(NSArray<NSString *> *)items;
+- (instancetype)initWithItems:(NSArray<NSString *> *)items
+                         font:(UIFont *)font
+            selectedTextColor:(UIColor *)selectedTextColor
+          unselectedTextColor:(UIColor *)unselectedTextColor
+                    trackView:(UIView *)trackView
+                 selectorView:(UIView *)selectorView;
+- (instancetype)initWithItems:(NSArray<NSString *> *)items
+                         font:(UIFont *)font
+            selectedTextColor:(UIColor *)selectedTextColor
+          unselectedTextColor:(UIColor *)unselectedTextColor
+              trackImageColor:(UIColor *)trackImageColor
+           selectorImageColor:(UIColor *)selectorImageColor;
+- (instancetype)initWithItems:(NSArray<NSString *> *)items
+                         font:(UIFont *)font
+            selectedTextColor:(UIColor *)selectedTextColor
+          unselectedTextColor:(UIColor *)unselectedTextColor
+                   trackImage:(UIImage *)trackImage
+                selectorImage:(UIImage *)selectorImage
+              trackImageColor:(UIColor *)trackImageColor
+           selectorImageColor:(UIColor *)selectorImageColor;
 
 @end

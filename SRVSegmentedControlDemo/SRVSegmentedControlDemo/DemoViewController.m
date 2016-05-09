@@ -25,17 +25,15 @@
     self.segmentedControl.items = @[@"hello", @"how", @"are", @"you"];
     [self updateSelectedSegmentLabel];
     
-    self.segmentedControl.selectorColor = [UIColor purpleColor];
-    self.segmentedControl.trackColor = [UIColor blueColor];
+    self.segmentedControl.selectorImageColor = [UIColor purpleColor];
+    self.segmentedControl.trackImageColor = [UIColor blueColor];
     
     self.segmentedControl.font = [UIFont boldSystemFontOfSize:10.0];
     
-    self.segmentedControl.selectedFontColor = [UIColor redColor];
-    self.segmentedControl.unselectedFontColor = [UIColor greenColor];
+    self.segmentedControl.selectedTextColor = [UIColor redColor];
+    self.segmentedControl.unselectedTextColor = [UIColor greenColor];
     
     self.segmentedControl.selectedSegmentIndex = 2;
-    
-    self.segmentedControl.items = @[@"hey", @"you"];
 }
 
 - (IBAction)segmentedControlValueChanged:(SRVSegmentedControl *)sender {

@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.author           = { "Sam Voigt" => "sam.voigt@gmail.com" }
   s.source           = { :git => "https://github.com/samvoigt/SRVSegmentedControl.git", :tag => '0.0.1' }
 
-  s.platform     = :ios, '9.0'
+  s.platform     = :ios, '8.0'
   s.requires_arc = true
 
   s.source_files = 'SRVSegmentedControl/*.{h,m}'

@@ -12,12 +12,12 @@
 		223B85A61CCABE5800D8D500 /* DemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 223B85A41CCABE5800D8D500 /* DemoViewController.m */; };
 		223B85A71CCABE5800D8D500 /* DemoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 223B85A51CCABE5800D8D500 /* DemoViewController.xib */; };
 		223B85B81CCAC41300D8D500 /* SRVSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 223B85B71CCAC41300D8D500 /* SRVSegmentedControl.m */; };
-		2287048B1CCF0B4600FE0A2E /* BackgroundImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 228704851CCF0B4600FE0A2E /* BackgroundImage.png */; };
-		2287048C1CCF0B4600FE0A2E /* BackgroundImage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 228704861CCF0B4600FE0A2E /* BackgroundImage@2x.png */; };
-		2287048D1CCF0B4600FE0A2E /* BackgroundImage@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 228704871CCF0B4600FE0A2E /* BackgroundImage@3x.png */; };
-		2287048E1CCF0B4600FE0A2E /* SelectedImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 228704881CCF0B4600FE0A2E /* SelectedImage.png */; };
-		2287048F1CCF0B4600FE0A2E /* SelectedImage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 228704891CCF0B4600FE0A2E /* SelectedImage@2x.png */; };
-		228704901CCF0B4600FE0A2E /* SelectedImage@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2287048A1CCF0B4600FE0A2E /* SelectedImage@3x.png */; };
+		2287048B1CCF0B4600FE0A2E /* TrackImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 228704851CCF0B4600FE0A2E /* TrackImage.png */; };
+		2287048C1CCF0B4600FE0A2E /* TrackImage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 228704861CCF0B4600FE0A2E /* TrackImage@2x.png */; };
+		2287048D1CCF0B4600FE0A2E /* TrackImage@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 228704871CCF0B4600FE0A2E /* TrackImage@3x.png */; };
+		2287048E1CCF0B4600FE0A2E /* SelectorImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 228704881CCF0B4600FE0A2E /* SelectorImage.png */; };
+		2287048F1CCF0B4600FE0A2E /* SelectorImage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 228704891CCF0B4600FE0A2E /* SelectorImage@2x.png */; };
+		228704901CCF0B4600FE0A2E /* SelectorImage@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2287048A1CCF0B4600FE0A2E /* SelectorImage@3x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,12 +31,12 @@
 		223B85A51CCABE5800D8D500 /* DemoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DemoViewController.xib; sourceTree = "<group>"; };
 		223B85B61CCAC41300D8D500 /* SRVSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SRVSegmentedControl.h; path = ../SRVSegmentedControl/SRVSegmentedControl.h; sourceTree = "<group>"; };
 		223B85B71CCAC41300D8D500 /* SRVSegmentedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SRVSegmentedControl.m; path = ../SRVSegmentedControl/SRVSegmentedControl.m; sourceTree = "<group>"; };
-		228704851CCF0B4600FE0A2E /* BackgroundImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = BackgroundImage.png; path = ../SRVSegmentedControl/Resources/BackgroundImage.png; sourceTree = "<group>"; };
-		228704861CCF0B4600FE0A2E /* BackgroundImage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "BackgroundImage@2x.png"; path = "../SRVSegmentedControl/Resources/BackgroundImage@2x.png"; sourceTree = "<group>"; };
-		228704871CCF0B4600FE0A2E /* BackgroundImage@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "BackgroundImage@3x.png"; path = "../SRVSegmentedControl/Resources/BackgroundImage@3x.png"; sourceTree = "<group>"; };
-		228704881CCF0B4600FE0A2E /* SelectedImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = SelectedImage.png; path = ../SRVSegmentedControl/Resources/SelectedImage.png; sourceTree = "<group>"; };
-		228704891CCF0B4600FE0A2E /* SelectedImage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "SelectedImage@2x.png"; path = "../SRVSegmentedControl/Resources/SelectedImage@2x.png"; sourceTree = "<group>"; };
-		2287048A1CCF0B4600FE0A2E /* SelectedImage@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "SelectedImage@3x.png"; path = "../SRVSegmentedControl/Resources/SelectedImage@3x.png"; sourceTree = "<group>"; };
+		228704851CCF0B4600FE0A2E /* TrackImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = TrackImage.png; path = ../SRVSegmentedControl/Resources/TrackImage.png; sourceTree = "<group>"; };
+		228704861CCF0B4600FE0A2E /* TrackImage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackImage@2x.png"; path = "../SRVSegmentedControl/Resources/TrackImage@2x.png"; sourceTree = "<group>"; };
+		228704871CCF0B4600FE0A2E /* TrackImage@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "TrackImage@3x.png"; path = "../SRVSegmentedControl/Resources/TrackImage@3x.png"; sourceTree = "<group>"; };
+		228704881CCF0B4600FE0A2E /* SelectorImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = SelectorImage.png; path = ../SRVSegmentedControl/Resources/SelectorImage.png; sourceTree = "<group>"; };
+		228704891CCF0B4600FE0A2E /* SelectorImage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "SelectorImage@2x.png"; path = "../SRVSegmentedControl/Resources/SelectorImage@2x.png"; sourceTree = "<group>"; };
+		2287048A1CCF0B4600FE0A2E /* SelectorImage@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "SelectorImage@3x.png"; path = "../SRVSegmentedControl/Resources/SelectorImage@3x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,12 +102,12 @@
 		223B85A91CCABEC500D8D500 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				228704851CCF0B4600FE0A2E /* BackgroundImage.png */,
-				228704861CCF0B4600FE0A2E /* BackgroundImage@2x.png */,
-				228704871CCF0B4600FE0A2E /* BackgroundImage@3x.png */,
-				228704881CCF0B4600FE0A2E /* SelectedImage.png */,
-				228704891CCF0B4600FE0A2E /* SelectedImage@2x.png */,
-				2287048A1CCF0B4600FE0A2E /* SelectedImage@3x.png */,
+				228704851CCF0B4600FE0A2E /* TrackImage.png */,
+				228704861CCF0B4600FE0A2E /* TrackImage@2x.png */,
+				228704871CCF0B4600FE0A2E /* TrackImage@3x.png */,
+				228704881CCF0B4600FE0A2E /* SelectorImage.png */,
+				228704891CCF0B4600FE0A2E /* SelectorImage@2x.png */,
+				2287048A1CCF0B4600FE0A2E /* SelectorImage@3x.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -170,12 +170,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				223B85A71CCABE5800D8D500 /* DemoViewController.xib in Resources */,
-				2287048C1CCF0B4600FE0A2E /* BackgroundImage@2x.png in Resources */,
-				2287048E1CCF0B4600FE0A2E /* SelectedImage.png in Resources */,
-				228704901CCF0B4600FE0A2E /* SelectedImage@3x.png in Resources */,
-				2287048B1CCF0B4600FE0A2E /* BackgroundImage.png in Resources */,
-				2287048D1CCF0B4600FE0A2E /* BackgroundImage@3x.png in Resources */,
-				2287048F1CCF0B4600FE0A2E /* SelectedImage@2x.png in Resources */,
+				2287048C1CCF0B4600FE0A2E /* TrackImage@2x.png in Resources */,
+				2287048E1CCF0B4600FE0A2E /* SelectorImage.png in Resources */,
+				228704901CCF0B4600FE0A2E /* SelectorImage@3x.png in Resources */,
+				2287048B1CCF0B4600FE0A2E /* TrackImage.png in Resources */,
+				2287048D1CCF0B4600FE0A2E /* TrackImage@3x.png in Resources */,
+				2287048F1CCF0B4600FE0A2E /* SelectorImage@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,6 +283,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = SRVSegmentedControlDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Integer-Wars.SRVSegmentedControlDemo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -294,6 +295,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = SRVSegmentedControlDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Integer-Wars.SRVSegmentedControlDemo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
