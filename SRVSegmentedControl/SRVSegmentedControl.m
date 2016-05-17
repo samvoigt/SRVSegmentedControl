@@ -34,17 +34,18 @@
               trackImageColor:(UIColor *)trackImageColor
            selectorImageColor:(UIColor *)selectorImageColor {
     
-    self = [self initWithItems:items font:font
-             selectedTextColor:selectedTextColor
-           unselectedTextColor:unselectedTextColor
-                     trackView:[[UIImageView alloc] initWithImage:trackImage]
-                  selectorView:[[UIImageView alloc] initWithImage:selectorImage]];
+    self = [super init];
     
     if (self) {
-        self.trackImage = trackImage;
-        self.selectorImage = selectorImage;
-        self.trackImageColor = trackImageColor;
-        self.selectorImageColor = selectorImageColor;
+        _items = items;
+        _font = font;
+        _selectedTextColor = selectedTextColor;
+        _unselectedTextColor = unselectedTextColor;
+        _trackImage = trackImage;
+        _selectorImage = selectorImage;
+        _trackImageColor = trackImageColor;
+        _selectorImageColor = selectorImageColor;
+        [self reflowViews];
     }
     return self;
 }
@@ -75,12 +76,12 @@
     
     self = [super init];
     if (self) {
-        self.items = items;
-        self.font = font;
-        self.selectedTextColor = selectedTextColor;
-        self.unselectedTextColor = unselectedTextColor;
-        self.trackView = trackView;
-        self.selectorView = selectorView;
+        _items = items;
+        _font = font;
+        _selectedTextColor = selectedTextColor;
+        _unselectedTextColor = unselectedTextColor;
+        _trackView = trackView;
+        _selectorView = selectorView;
         [self reflowViews];
     }
     return self;
@@ -91,10 +92,24 @@
     
     self = [super init];
     if (self) {
-        self.items = items;
+        _items = items;
         [self reflowViews];
     }
     return self;
+}
+
+- (void)setupGestureRecognizer {
+    for (UIGestureRecognizer *recognizer in self.gestureRecognizers) {
+        [self removeGestureRecognizer:recognizer];
+    }
+
+    for (UIGestureRecognizer *recognizer in self.selectorView.gestureRecognizers) {
+        [self.selectorView removeGestureRecognizer:recognizer];
+    }
+    
+    [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)]];
+    [self.selectorView addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)]];
+
 }
 
 - (void)layoutSubviews {
@@ -107,19 +122,16 @@
     [self removeAllSubviews];
     
     self.selectedSegmentIndex = 0;
-    [self loadTrackViewIfNeeded];
-    
-    [self loadTrackViewIfNeeded];
+   
     [self setupTrackView];
     
     [self setupLabels];
     
-    [self loadSelectorViewIfNeeded];
     [self setupSelectorView];
-    
-    [self setupGestureRecognizers];
-    
+       
     [self bringSubviewToFront:self.selectedLabelsContainterView];
+    
+    [self setupGestureRecognizer];
     
     [self setNeedsLayout];
     [self layoutIfNeeded];
@@ -127,20 +139,13 @@
     [self setupSelectorMask];
 }
 
-- (void)loadTrackViewIfNeeded {
-
+- (void)setupTrackView {
+    
     if (!self.trackView) {
         if (!self.trackImage) {
             _trackImage = [SRVSegmentedControl defaultTrackImage];
         }
         _trackView = [[UIImageView alloc] initWithImage:self.trackImage];
-    }
-}
-
-- (void)setupTrackView {
-    
-    if (self.trackView) {
-        [self.trackView removeFromSuperview];
     }
     
     self.trackView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -236,20 +241,13 @@
     [view addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:lastLabel attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
 }
 
-- (void)loadSelectorViewIfNeeded {
+- (void)setupSelectorView {
     
     if (!self.selectorView) {
         if (!self.selectorImage) {
             _selectorImage = [SRVSegmentedControl defaultSelectorImage];
         }
         _selectorView = [[UIImageView alloc] initWithImage:self.selectorImage];
-    }
-}
-
-- (void)setupSelectorView {
-    
-    if (self.selectorView) {
-        [self.selectorView removeFromSuperview];
     }
     
     self.selectorView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -276,14 +274,6 @@
     }
     
     self.selectedLabelsContainterView.maskView = self.selectorMaskView;
-}
-
-- (void)setupGestureRecognizers {
-    
-    for (UIGestureRecognizer *recognizer in self.gestureRecognizers) {
-        [self removeGestureRecognizer:recognizer];
-    }
-    [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)]];
 }
 
 - (void)removeAllSubviews {
@@ -345,17 +335,26 @@
 #pragma mark - Setters and Getters
 
 - (void)setItems:(NSArray<NSString *> *)items {
+    
+    if (_items == items) {
+        return;
+    }
+    
     _items = items;
     [self reflowViews];
 }
 
 - (void)setTrackView:(UIView *)trackView {
     
+    if (_trackView == trackView) {
+        return;
+    }
+    
     if (_trackView) {
         [_trackView removeFromSuperview];
     }
     _trackView = trackView;
-    [self setupTrackView];
+    [self reflowViews];
 }
 
 - (void)setSelectorView:(UIView *)selectorView {
@@ -363,22 +362,20 @@
     if (_selectorView == selectorView) {
         return;
     }
-    else if (_selectorView) {
-        [_selectorView removeFromSuperview];
-    }
     
     _selectorView = selectorView;
-    [self setupSelectorView];
-    [_selectorView addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)]];
-    [self setupSelectorMask];
+    
+    [self reflowViews];
 }
 
 - (void)setTrackImage:(UIImage *)trackImage {
     
-    _trackImage = trackImage;
-    if ([self.trackView isKindOfClass:[UIImageView class]]){
-        ((UIImageView *)self.trackView).image = trackImage;
+    if (_trackImage == trackImage) {
+        return;
     }
+    
+    _trackImage = trackImage;
+    [self reflowViews];
 }
 
 - (void)setTrackImageColor:(UIColor *)trackImageColor{
@@ -394,12 +391,13 @@
 }
 
 - (void)setSelectorImage:(UIImage *)selectorImage {
-    _selectorImage = selectorImage;
-   
-    if ([self.selectorView isKindOfClass:[UIImageView class]]){
-        ((UIImageView *)self.selectorView).image = selectorImage;
-        [self setupSelectorMask];
+    
+    if (_selectorImage == selectorImage) {
+        return;
     }
+    
+    _selectorImage = selectorImage;
+    [self reflowViews];
 }
 
 - (void)setSelectorImageColor:(UIColor *)selectorImageColor {
@@ -417,28 +415,19 @@
 - (void)setFont:(UIFont *)font {
     
     _font = font;
-    for (UILabel *label in self.unselectedLabels) {
-        label.font = font;
-    }
-    for (UILabel *label in self.selectedLabels) {
-        label.font = font;
-    }
+    [self reflowViews];
 }
 
 - (void)setSelectedTextColor:(UIColor *)selectedTextColor {
 
     _selectedTextColor = selectedTextColor;
-    for (UILabel *label in self.selectedLabels) {
-        label.textColor = selectedTextColor;
-    }
+    [self reflowViews];
 }
 
 - (void)setUnselectedTextColor:(UIColor *)unselectedTextColor {
     
     _unselectedTextColor = unselectedTextColor;
-    for (UILabel *label in self.unselectedLabels) {
-        label.textColor = unselectedTextColor;
-    }
+    [self reflowViews];
 }
 
 - (void)setSelectedSegmentIndex:(NSInteger)selectedSegmentIndex {
