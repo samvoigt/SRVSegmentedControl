@@ -476,9 +476,14 @@
 
 + (UIImage *)imageInPodsBundleNamed:(NSString *)imageName {
     
-    NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"SRVSegmentedControl" ofType:@"bundle"];
-    NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
-    return [UIImage imageNamed:imageName inBundle:bundle compatibleWithTraitCollection:nil];
+    static NSBundle *podBundle = nil;
+    if (!podBundle) {
+        NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+        NSURL *podBundleURL = [bundle URLForResource:@"SRVSegmentedControl" withExtension:@"bundle"];
+        podBundle = [NSBundle bundleWithURL:podBundleURL];
+    }
+    
+    return [UIImage imageNamed:imageName inBundle:podBundle compatibleWithTraitCollection:nil];
 }
 
 + (UIEdgeInsets)edgeInsetsForDefaultImages {
