@@ -1,11 +1,11 @@
 Pod::Spec.new do |s|
   s.name             = "SRVSegmentedControl"
-  s.version          = "0.0.1"
+  s.version          = "0.0.2"
   s.summary          = "A nice segmented control for iOS"
   s.homepage         = "https://github.com/samvoigt/SRVSegmentedControl"
   s.license          = 'MIT'
   s.author           = { "Sam Voigt" => "sam.voigt@gmail.com" }
-  s.source           = { :git => "https://github.com/samvoigt/SRVSegmentedControl.git", :tag => '0.0.1' }
+  s.source           = { :git => "https://github.com/samvoigt/SRVSegmentedControl.git", :tag => '0.0.2' }
 
   s.platform     = :ios, '8.0'
   s.requires_arc = true

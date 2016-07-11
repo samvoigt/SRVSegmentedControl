@@ -18,6 +18,8 @@
 
 @property (nonatomic, strong) NSLayoutConstraint *selectorOffsetConstraint;
 
+@property (nonatomic) BOOL shouldUpdateSelectorLocationAfterLayoutPass;
+
 @end
 
 @implementation SRVSegmentedControl
@@ -102,19 +104,24 @@
     for (UIGestureRecognizer *recognizer in self.gestureRecognizers) {
         [self removeGestureRecognizer:recognizer];
     }
-
+    
     for (UIGestureRecognizer *recognizer in self.selectorView.gestureRecognizers) {
         [self.selectorView removeGestureRecognizer:recognizer];
     }
     
     [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)]];
     [self.selectorView addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)]];
-
+    
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
     self.selectorMaskView.frame = self.selectorView.frame;
+    
+    if (self.shouldUpdateSelectorLocationAfterLayoutPass && !CGRectEqualToRect(self.frame, CGRectZero)) {
+        self.shouldUpdateSelectorLocationAfterLayoutPass = NO;
+        [self setSelectedSegmentIndex:self.selectedSegmentIndex animated:NO];
+    }
 }
 
 - (void)reflowViews {
@@ -122,13 +129,13 @@
     [self removeAllSubviews];
     
     self.selectedSegmentIndex = 0;
-   
+    
     [self setupTrackView];
     
     [self setupLabels];
     
     [self setupSelectorView];
-       
+    
     [self bringSubviewToFront:self.selectedLabelsContainterView];
     
     [self setupGestureRecognizer];
@@ -203,7 +210,7 @@
     self.selectedLabelsContainterView = [UIView new];
     self.selectedLabelsContainterView.translatesAutoresizingMaskIntoConstraints = NO;
     self.selectedLabelsContainterView.userInteractionEnabled = NO;
-        
+    
     [self addSubview:self.selectedLabelsContainterView];
     
     NSDictionary *views = @{@"container" : self.selectedLabelsContainterView};
@@ -329,7 +336,6 @@
 - (void)updateSelectorLocation {
     [self setNeedsLayout];
     [self layoutIfNeeded];
-    self.selectorMaskView.frame = self.selectorView.frame;
 }
 
 #pragma mark - Setters and Getters
@@ -419,7 +425,7 @@
 }
 
 - (void)setSelectedTextColor:(UIColor *)selectedTextColor {
-
+    
     _selectedTextColor = selectedTextColor;
     [self reflowViews];
 }
@@ -440,13 +446,18 @@
         return;
     }
     
+    _selectedSegmentIndex = segmentIndex;
+    [self sendActionsForControlEvents:UIControlEventValueChanged];
+    
+    if (CGRectEqualToRect(self.frame, CGRectZero)) {
+        self.shouldUpdateSelectorLocationAfterLayoutPass = YES;
+        return;
+    }
+    
     CGFloat endOffset = (segmentIndex * self.selectorView.frame.size.width);
     
     self.selectorOffsetConstraint.constant = endOffset;
     [self setNeedsUpdateConstraints];
-    
-    _selectedSegmentIndex = segmentIndex;
-    [self sendActionsForControlEvents:UIControlEventValueChanged];
     
     if (animated) {
         CGRect endFrameForMask = CGRectMake(endOffset, 0, self.selectorMaskView.frame.size.width, self.selectorMaskView.frame.size.height);
@@ -465,7 +476,7 @@
 #pragma mark - Cocoapod Resource Bundle Handling
 
 + (UIImage *)defaultTrackImage {
- 
+    
     return [[[SRVSegmentedControl imageInPodsBundleNamed:@"TrackImage"] resizableImageWithCapInsets:self.edgeInsetsForDefaultImages] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
 }
 
